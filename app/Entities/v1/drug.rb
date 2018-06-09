@@ -3,6 +3,7 @@ module Entities
     class Drug < Grape::Entity
       expose :id, documentation: {type: 'string'}
       expose :registered_name, documentation: {type: 'string', desc: "Registered drug name"}
+      expose :issuing
     end
   end
 end
