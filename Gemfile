@@ -8,6 +8,7 @@ gem 'otr-activerecord'
 gem 'sqlite3'
 gem 'rake'
 gem 'puma'
+gem 'grape-swagger'
 
 group :development do
   gem 'shotgun'
