@@ -10,6 +10,7 @@ gem 'rake'
 
 group :development do
   gem 'shotgun'
+  gem 'pry'
 end
 
 group :test do

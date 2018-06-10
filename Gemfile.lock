@@ -18,6 +18,7 @@ GEM
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
     builder (3.2.3)
+    coderay (1.1.2)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
     concurrent-ruby (1.0.5)
@@ -41,6 +42,7 @@ GEM
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
+    method_source (0.9.0)
     minitest (5.11.3)
     multi_json (1.13.1)
     mustermann (1.0.2)
@@ -49,6 +51,9 @@ GEM
     otr-activerecord (1.2.5)
       activerecord (>= 4.0, < 5.3)
       hashie-forbidden_attributes (~> 0.1)
+    pry (0.11.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
     rack (2.0.5)
     rack-accept (0.4.5)
       rack (>= 0.4)
@@ -76,6 +81,7 @@ DEPENDENCIES
   grape
   grape-entity
   otr-activerecord
+  pry
   rack
   rack-test
   rake
