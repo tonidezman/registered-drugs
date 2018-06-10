@@ -11,61 +11,29 @@ module Routes
         get :help do
           {
             require_user_type: true,
-            search_query_by: [:registered_name, :active_ingredient, :issuing],
+            search_query_by: [:registered_name, :active_ingredient, :pharmaceutical_form, :insurance_list, :issuing, :atc, :license_holder],
             additional_info: "You can do search by one or two attributes"
           }
         end
 
         params do
-          requires :user_type, allow_blank: false, type: String, values: [
-            "Student",
-            "Other",
-            "MD"
-          ]
-          optional :registered_name, type: String
-          optional :active_ingredient, type: String
-          optional :pharmaceutical_form, type: String
-          optional :insurance_list, type: String
-          optional :issuing, type: String
-          optional :atc, type: String
-          optional :license_holder, type: String
-          # at_least_one_of :registered_name, :active_ingredient,
-            # :pharmaceutical_form, :insurance_list, :issuing, :atc, :license_holder
+          requires :user_type, allow_blank: false, type: String, values: ["Student", "Other", "MD"]
         end
         desc 'Filters Registered Drugs'
         get do
-          # check if columns exist
-          if params.count > 1
-            params.each do |key, _|
-              next if key == "user_type"
-              unless ActiveRecord::Base.connection.column_exists?(:drugs, key)
-                error!({error: "Drug attribute '#{key}' does not exist"})
-              end
-            end
+          if params.count > 1 && !Drug.columns_exist?(params)
+            error!({error: "Check correctness for drug attributes in the URL"})
           end
 
-        # Student and Others cannot change issuing
-        if ["Student", "Other"].include?(params[:user_type]) && params.key?(:issuing)
-          error!({error: "Students and Others cannot filter by issuing attribute"})
-        end
+          student_or_other_want_to_filter_by_issuing =
+            ["Student", "Other"].include?(params[:user_type]) && params.key?(:issuing)
+          if student_or_other_want_to_filter_by_issuing
+            error!({error: "Students and Others cannot filter by issuing attribute"})
+          end
 
-          result = []
           if params.count == 1
-            if params["user_type"] == "MD"
-              result << Drug.all
-            else
-              result << Drug.where("issuing = 'BR'")
-            end
-          elsif params.count == 2
-            params.each do |key, value|
-              next if key == "user_type"
-              if params[:user_type] == "MD"
-                result << Drug.where("#{key} LIKE ?", "%#{value}%")
-              else
-                result << Drug.where("#{key} LIKE ?", "%#{value}% AND issuing = 'BR'")
-              end
-            end
-          elsif params.count == 3
+            result = (params["user_type"] == "MD") ? Drug.all : Drug.where("issuing = 'BR'")
+          elsif params.count <= 3
             query = ""
             query_params = []
             params.each do |key, value|
@@ -81,11 +49,11 @@ module Routes
             unless params[:user_type] == "MD"
               query << " AND issuing = 'BR'"
             end
-            result << Drug.where(query, query_params[0], query_params[1])
+            result = Drug.where(query, *query_params)
           else
             error!({error: "You can search over one or two attributes"}, 400)
           end
-          result.flatten
+          result
         end
       end
     end
