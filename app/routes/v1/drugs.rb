@@ -22,18 +22,20 @@ module Routes
         desc 'Filters Registered Drugs'
         get do
           if params.count > 1 && !Drug.columns_exist?(params)
-            error!({error: "Check correctness for drug attributes in the URL"})
+            error!({ error: "Check correctness for drug attributes in the URL" })
           end
 
-          student_or_other_want_to_filter_by_issuing =
-            ["Student", "Other"].include?(params[:user_type]) && params.key?(:issuing)
+          student_or_other_want_to_filter_by_issuing = ["Student", "Other"].include?(params[:user_type]) && params.key?(:issuing)
           if student_or_other_want_to_filter_by_issuing
-            error!({error: "Students and Others cannot filter by issuing attribute"})
+            error!({ error: "Students and Others cannot filter by issuing attribute" })
           end
 
-          if params.count == 1
-            result = (params["user_type"] == "MD") ? Drug.all : Drug.where("issuing = 'BR'")
-          elsif params.count <= 3
+          only_user_type_param_given = params.count == 1
+          additional_params_given = params.count <= 3
+          if only_user_type_param_given
+            query = (params["user_type"] == "MD") ? "issuing != 'BR'" : "issuing = 'BR'"
+            result = Drug.where(query)
+          elsif additional_params_given
             query = ""
             query_params = []
             params.each do |key, value|
@@ -46,12 +48,10 @@ module Routes
                 query_params << "%#{value}%"
               end
             end
-            unless params[:user_type] == "MD"
-              query << " AND issuing = 'BR'"
-            end
+            query << ((params[:user_type] == "MD") ? " AND issuing != 'BR'" : " AND issuing = 'BR'")
             result = Drug.where(query, *query_params)
           else
-            error!({error: "You can search over one or two attributes"}, 400)
+            error!({ error: "You can search over one or two attributes" }, 400)
           end
           result
         end

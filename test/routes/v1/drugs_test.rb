@@ -22,9 +22,9 @@ class ApiV1DrugstTest < ApiV1TestCase
     assert json_response.key?(:error)
   end
 
-  def test_returns_all_drugs_for_doctors
+  def test_returns_prescription_drugs
     get '/v1/search?user_type=MD'
-    assert_equal 5, json_response.size
+    assert_equal 3, json_response.size
   end
 
   def test_returns_filtered_drugs_for_students
@@ -53,9 +53,9 @@ class ApiV1DrugstTest < ApiV1TestCase
     assert json_response.key?(:error)
   end
 
-  def test_two_right_drug_arguments_for_doctors
+  def test_two_right_drug_arguments_for_prescription_drugs
     get '/v1/search?user_type=MD&registered_name=Drug&pharmaceutical_form=x'
-    assert_equal 3, json_response.size
+    assert_equal 2, json_response.size
   end
 
   def test_two_right_drug_arguments_for_students
