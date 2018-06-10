@@ -7,6 +7,7 @@ gem 'activerecord', '~> 5.0.2', require: 'active_record'
 gem 'otr-activerecord'
 gem 'sqlite3'
 gem 'rake'
+gem 'puma'
 
 group :development do
   gem 'shotgun'
