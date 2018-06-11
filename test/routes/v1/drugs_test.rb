@@ -92,4 +92,9 @@ class ApiV1DrugstTest < ApiV1TestCase
     get '/v1/search?user_type=MD&issuing=x'
     assert_equal 0, json_response.size
   end
+  def test_md_adds_another_issuing
+    get '/v1/search?user_type=MD&issuing=R'
+    assert_equal 2, json_response.size
+  end
+
 end
