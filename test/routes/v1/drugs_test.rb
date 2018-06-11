@@ -96,5 +96,4 @@ class ApiV1DrugstTest < ApiV1TestCase
     get '/v1/search?user_type=MD&issuing=R'
     assert_equal 2, json_response.size
   end
-
 end

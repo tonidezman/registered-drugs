@@ -51,7 +51,7 @@ module Routes
             query << ((params[:user_type] == "MD") ? " AND issuing != 'BR'" : " AND issuing = 'BR'")
             result = Drug.where(query, *query_params)
           else
-            error!({ error: "You can search over one or two attributes" }, 400)
+            error!({ error: "You cannot filter with more than two parameters" }, 400)
           end
           result
         end
